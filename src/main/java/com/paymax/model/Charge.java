@@ -45,7 +45,7 @@ public class Charge extends Paymax {
     //已退款金额
     private BigDecimal amountRefunded;
     //是否已经开始退款
-    private boolean refunded;
+    private Boolean refunded;
     //退款记录
     private List<Refund> refunds;
     //订单创建时间，13位时间戳
@@ -261,15 +261,15 @@ public class Charge extends Paymax {
         this.status = status;
     }
 
-    public boolean isRefunded() {
-        return refunded;
-    }
+	public Boolean getRefunded() {
+		return refunded;
+	}
 
-    public void setRefunded(boolean refunded) {
-        this.refunded = refunded;
-    }
+	public void setRefunded(Boolean refunded) {
+		this.refunded = refunded;
+	}
 
-    public Long getTimeCreated() {
+	public Long getTimeCreated() {
         return timeCreated;
     }
 

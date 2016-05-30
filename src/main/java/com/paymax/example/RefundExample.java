@@ -27,7 +27,12 @@ public class RefundExample {
         refundMap.put("description", "description");
 
         try {
-            System.out.println( Refund.create("ch_4671d8bbac347cdd33669b2a",refundMap));
+	        Refund refund = Refund.create("ch_4671d8bbac347cdd33669b2a", refundMap);
+	        if (refund.getResponseCode()<400) {
+		        System.out.println(refund);
+	        }else{
+		        System.out.println("退款申请失败:"+refund.getFailureMsg());
+	        }
         } catch (AuthorizationException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -41,7 +41,17 @@ import java.util.*;
  */
 public abstract class Paymax extends PaymaxBase {
 
-    private static CloseableHttpClient httpsClient = null;
+	private int responseCode;
+
+	public int getResponseCode() {
+		return responseCode;
+	}
+
+	public void setResponseCode(int responseCode) {
+		this.responseCode = responseCode;
+	}
+
+	private static CloseableHttpClient httpsClient = null;
 
     static class AnyTrustStrategy implements TrustStrategy {
 
@@ -89,7 +99,7 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      * @throws InvalidRequestException
      */
-    protected static <T> T request(String url, String reqData, Class<T> clazz) throws AuthorizationException, IOException, InvalidRequestException {
+    protected static <T extends Paymax> T request(String url, String reqData, Class<T> clazz) throws AuthorizationException, IOException, InvalidRequestException {
         if(StringUtils.isBlank(SignConfig.SECRET_KEY)){
             throw new AuthorizationException("Secret key can not be blank.Please set your Secret key in com.Paymax.config.SignConfig");
         }
@@ -119,20 +129,23 @@ public abstract class Paymax extends PaymaxBase {
      * @param <T>
      * @return
      */
-    private static <T> T dealWithResult(Map<String, String> result,Class<T> clazz) {
-        int resultCode = Integer.valueOf(result.get("code")).intValue();
-        String resultData = result.get("data");
-        if (resultCode >= 400){
-            return JSON.parseObject(resultData,clazz);
-        }
+    private static <T extends Paymax> T dealWithResult(Map<String, String> result,Class<T> clazz) {
+	    int resultCode = Integer.valueOf(result.get("code")).intValue();
+	    String resultData = result.get("data");
+	    if (resultCode >= 400){
+		    T t = JSON.parseObject(resultData, clazz);
+		    t.setResponseCode(resultCode);
+		    return t;
+	    }
 
-        Map<String,String> map = (Map<String, String>) JSONObject.parse(resultData);
-        boolean flag = RSA.verify(map.get(PaymaxConfig.RESDATA),map.get(PaymaxConfig.SIGN), SignConfig.PAYMAX_PUBLIC_KEY);
-        if(!flag){
-            return JSON.parseObject(null,clazz);
-        }
-
-        return JSON.parseObject(map.get(PaymaxConfig.RESDATA),clazz);
+	    Map<String,String> map = (Map<String, String>) JSONObject.parse(resultData);
+	    boolean flag = RSA.verify(map.get(PaymaxConfig.RESDATA), map.get(PaymaxConfig.SIGN), SignConfig.PAYMAX_PUBLIC_KEY);
+	    if(!flag){
+		    return JSON.parseObject(null,clazz);
+	    }
+	    T t = JSON.parseObject(map.get(PaymaxConfig.RESDATA), clazz);
+	    t.setResponseCode(resultCode);
+	    return t;
     }
 
     /**

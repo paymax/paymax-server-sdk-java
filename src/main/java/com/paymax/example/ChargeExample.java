@@ -23,7 +23,6 @@ public class ChargeExample {
      * 创建充值订单
      */
     public void charge() {
-        Charge charge = null;
         Map<String, Object> chargeMap = new HashMap<String, Object>();
         chargeMap.put("amount", 1);
         chargeMap.put("subject", "Your Subject");
@@ -31,11 +30,16 @@ public class ChargeExample {
         chargeMap.put("order_no", UUID.randomUUID());
         chargeMap.put("channel", "alipay_app");
         chargeMap.put("client_ip", "127.0.0.1");
-        chargeMap.put("app", "app_49b0f1dd741646d2b277524de2785836");
+        chargeMap.put("app", "app_49b0f1dd7416");
         chargeMap.put("currency","CNY");
         chargeMap.put("description","description");
         try {
-            System.out.println( Charge.create(chargeMap));
+	        Charge charge = Charge.create(chargeMap);
+	        if (charge.getResponseCode()<400){
+		        System.out.println(charge);
+	        }else{
+		        System.out.println("下单失败, reason:"+charge.getFailureMsg());
+	        }
         } catch (AuthorizationException e) {
             e.printStackTrace();
         } catch (IOException e) {
