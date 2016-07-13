@@ -15,4 +15,7 @@ public class PaymaxConfig {
     public static String SIGN = "sign";
     //返回数据的key
     public static String RESDATA = "res_data";
+
+    //SDK版本
+    public static String SDK_VERSION = "1.0.0";
 }

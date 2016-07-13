@@ -1,9 +1,11 @@
 package com.paymax.model;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.paymax.config.PaymaxConfig;
 import com.paymax.exception.AuthorizationException;
 import com.paymax.exception.InvalidRequestException;
+import com.paymax.exception.InvalidResponseException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -17,7 +19,8 @@ public class Refund extends Paymax {
     //	退款订单id，系统内唯一，以“re_”开头，后跟24位随机数
     private String id;
     //	商户订单号，在商户系统内唯一，8-20位数字或字母，不允许特殊字符
-    private String order_no;
+    @JSONField(name="order_no")
+    private String orderNo;
     //	退款订单对应的支付订单id
     private String charge;
     //	退款订单总金额，大于0的数字，单位是该币种的货币单位
@@ -27,20 +30,34 @@ public class Refund extends Paymax {
     //退款备注，限制300个字符内
     private String description;
     //	支付渠道退款订单号
+    @JSONField(name="transaction_no")
     private String transactionNo;
     //用户自定义元数据
     private Map<String, Object> metadata;
     //订单创建时间，13位时间戳
+    @JSONField(name="time_created")
     private Long timeCreated;
     //	订单退款完成时间，13位时间戳
+    @JSONField(name="time_succeed")
     private Long timeSucceed;
     //订单的错误码
+    @JSONField(name="failure_code")
     private String failureCode;
     //订单的错误消息的描述
+    @JSONField(name="failure_msg")
     private String failureMsg;
     //	订单状态，只有三种（PROCESSING-处理中，SUCCEED-成功，FAILED-失败）
     private String status;
+    //本次请求是否成功 true:成功,false:失败
+    private Boolean reqSuccessFlag;
 
+    public Boolean getReqSuccessFlag() {
+        return reqSuccessFlag;
+    }
+
+    public void setReqSuccessFlag(Boolean reqSuccessFlag) {
+        this.reqSuccessFlag = reqSuccessFlag;
+    }
     public String getId() {
         return id;
     }
@@ -49,12 +66,12 @@ public class Refund extends Paymax {
         this.id = id;
     }
 
-    public String getOrder_no() {
-        return order_no;
+    public String getOrderNo() {
+        return orderNo;
     }
 
-    public void setOrder_no(String order_no) {
-        this.order_no = order_no;
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 
     public String getCharge() {
@@ -154,7 +171,7 @@ public class Refund extends Paymax {
      * @throws IOException
      * @throws InvalidRequestException
      */
-    public static Refund create(String chargeId,Map<String,Object> params) throws AuthorizationException, IOException, InvalidRequestException {
+    public static Refund create(String chargeId,Map<String,Object> params) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
         return request(PaymaxConfig.API_BASE_URL+ PaymaxConfig.CREATE_CHARGE+"/"+chargeId+"/refunds", JSONObject.toJSONString(params),Refund.class);
     }
 
@@ -167,7 +184,7 @@ public class Refund extends Paymax {
      * @throws IOException
      * @throws InvalidRequestException
      */
-    public static Refund retrieve(String chargeId,String refundId) throws AuthorizationException, IOException, InvalidRequestException {
+    public static Refund retrieve(String chargeId,String refundId) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
         return request(PaymaxConfig.API_BASE_URL+ PaymaxConfig.CREATE_CHARGE+"/"+chargeId+"/refunds/"+refundId, null,Refund.class);
     }
 }
