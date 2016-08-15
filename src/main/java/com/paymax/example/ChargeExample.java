@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 /**
  * Created by xiaowei.wang on 2016/4/27.
  */
@@ -32,7 +33,7 @@ public class ChargeExample {
         chargeMap.put("order_no", UUID.randomUUID());
         chargeMap.put("channel", "alipay_app");
         chargeMap.put("client_ip", "127.0.0.1");
-        chargeMap.put("app", "app_1r75lbxeP6S2oVLK");
+        chargeMap.put("app", "app_7hqF2S6GYXET457i");
         chargeMap.put("currency","CNY");
         chargeMap.put("description","我是中文");
 	    //请根据渠道要求确定是否需要传递extra字段
@@ -78,7 +79,7 @@ public class ChargeExample {
      */
     public void retrieve() {
         try {
-            Charge charge = Charge.retrieve("ch_49adf21b1529b2339159e67a");
+            Charge charge = Charge.retrieve("ch_bd88045a391aade151476221");
             printResult(charge);
         } catch (AuthorizationException e) {
             e.printStackTrace();
