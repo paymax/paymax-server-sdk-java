@@ -52,7 +52,7 @@ public class Charge extends Paymax {
     @JSONField(name="amount_refunded")
     private BigDecimal amountRefunded;
     //是否已经开始退款
-    private boolean refunded;
+    private Boolean refunded;
     //退款记录
     private List<Refund> refunds;
     //订单创建时间，13位时间戳
@@ -283,11 +283,11 @@ public class Charge extends Paymax {
         this.status = status;
     }
 
-    public boolean isRefunded() {
+    public Boolean isRefunded() {
         return refunded;
     }
 
-    public void setRefunded(boolean refunded) {
+    public void setRefunded(Boolean refunded) {
         this.refunded = refunded;
     }
 

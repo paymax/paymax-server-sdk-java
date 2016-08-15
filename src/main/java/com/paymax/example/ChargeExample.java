@@ -1,5 +1,6 @@
 package com.paymax.example;
 
+import com.alibaba.fastjson.JSON;
 import com.paymax.exception.AuthorizationException;
 import com.paymax.exception.InvalidRequestException;
 import com.paymax.exception.InvalidResponseException;
@@ -31,14 +32,16 @@ public class ChargeExample {
         chargeMap.put("order_no", UUID.randomUUID());
         chargeMap.put("channel", "alipay_app");
         chargeMap.put("client_ip", "127.0.0.1");
-        chargeMap.put("app", "app_49b0f1dd741646d2b277524de2785836");
+        chargeMap.put("app", "app_1r75lbxeP6S2oVLK");
         chargeMap.put("currency","CNY");
-        chargeMap.put("description","description");
-        Map<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("metadata_key1","metadata_value1");
-        metadata.put("metadata_key2","metadata_value2");
-        chargeMap.put("metadata",metadata);
-        try {
+        chargeMap.put("description","我是中文");
+	    //请根据渠道要求确定是否需要传递extra字段
+        Map<String, Object> extra = new HashMap<String, Object>();
+        extra.put("user_id","中文测试");
+        extra.put("return_url","http://132.123.221.22/333/kad");
+        chargeMap.put("extra",extra);
+        
+	    try {
             Charge charge = Charge.create(chargeMap);
             printResult(charge);
         } catch (AuthorizationException e) {
@@ -60,10 +63,13 @@ public class ChargeExample {
      */
     private void printResult(Charge charge) {
         if (charge.getReqSuccessFlag()){//http请求成功
-            System.out.println(charge);
+            System.out.println(JSON.toJSONString(charge));
         }else {//http请求失败
+	        System.out.println(JSON.toJSONString(charge));
             String failureCode = charge.getFailureCode();
             String failureMsg = charge.getFailureMsg();
+            System.out.println("failureCode:"+failureCode);
+            System.out.println("failureMsg:"+failureMsg);
         }
     }
 
@@ -72,7 +78,7 @@ public class ChargeExample {
      */
     public void retrieve() {
         try {
-            Charge charge = Charge.retrieve("ch_6e2e029873f8b0a87035e03f");
+            Charge charge = Charge.retrieve("ch_49adf21b1529b2339159e67a");
             printResult(charge);
         } catch (AuthorizationException e) {
             e.printStackTrace();

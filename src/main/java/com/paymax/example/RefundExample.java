@@ -56,6 +56,8 @@ public class RefundExample {
         }else {//http请求失败
             String failureCode = refund.getFailureCode();
             String failureMsg = refund.getFailureMsg();
+            System.out.println("failureCode:"+failureCode);
+            System.out.println("failureMsg:"+failureMsg);
         }
     }
 
