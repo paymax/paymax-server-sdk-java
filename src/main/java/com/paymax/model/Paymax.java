@@ -105,6 +105,7 @@ public abstract class Paymax extends PaymaxBase {
      * @throws InvalidRequestException
      */
     protected static <T> T request(String url, String jsonReqData, Class<T> clazz) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
+
         if(StringUtils.isBlank(SignConfig.SECRET_KEY)){
             throw new AuthorizationException("Secret key can not be blank.Please set your Secret key in com.Paymax.config.SignConfig");
         }
@@ -120,7 +121,7 @@ public abstract class Paymax extends PaymaxBase {
         if (StringUtils.isBlank(jsonReqData)){
             result = buildGetRequest(url);
         }else {
-            result = buildPostRequest(url, jsonReqData);
+            result = buildPostRequest(url, jsonReqData, clazz);
         }
 
         return dealWithResult(result,clazz);
@@ -140,9 +141,13 @@ public abstract class Paymax extends PaymaxBase {
         String resultData = result.get(RESPONSE_DATA);
 
         T t = JSON.parseObject(resultData,clazz);
+
         try {
             if (t==null){
                 t = clazz.newInstance();
+            }
+            if(clazz.getSimpleName().equals("String")){
+                return t;
             }
 
             Field f = clazz.getDeclaredField(REQUEST_SUCCESS_FLAG);
@@ -168,7 +173,7 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      * @throws InvalidResponseException
      */
-    private static  Map<String, String> buildPostRequest(String url, String jsonReqData) throws IOException, InvalidResponseException {
+    private static  Map<String, String> buildPostRequest(String url, String jsonReqData, Class clazz) throws IOException, InvalidResponseException {
         Map<String, String> result = null;
 
         HttpPost httpPost = new HttpPost(url);
@@ -183,6 +188,15 @@ public abstract class Paymax extends PaymaxBase {
         httpPost.addHeader(PaymaxConfig.SIGN,sign);
 
         CloseableHttpResponse response = httpsClient.execute(httpPost);
+
+        if(clazz.getSimpleName().equals("String")){
+            int responseCode = response.getStatusLine().getStatusCode();
+            String resData = EntityUtils.toString(response.getEntity(), Charset.forName(PaymaxConfig.CHARSET));
+            result.put(RESPONSE_CODE, String.valueOf(responseCode));
+            result.put(RESPONSE_DATA, resData);
+            return result;
+        }
+
         try {
             result = verifyData(response);
         } finally {

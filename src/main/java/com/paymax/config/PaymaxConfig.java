@@ -8,6 +8,8 @@ public class PaymaxConfig {
     public static final String API_BASE_URL = "https://www.paymax.cc/merchant-api/";
     //请求method
     public static final String CREATE_CHARGE = "v1/charges";
+    //请求下载对账单method
+    public static final String STATEMENT_DOWNLOAD = "statement/download";
     //编码集
     public static final String CHARSET = "UTF-8";
     //签名后数据的key
