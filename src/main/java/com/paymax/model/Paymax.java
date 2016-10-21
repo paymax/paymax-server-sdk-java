@@ -121,7 +121,11 @@ public abstract class Paymax extends PaymaxBase {
         if (StringUtils.isBlank(jsonReqData)){
             result = buildGetRequest(url);
         }else {
-            result = buildPostRequest(url, jsonReqData, clazz);
+            if(clazz.getSimpleName().equals("String")){
+                return (T) buildDownloadPostRequest(url, jsonReqData);
+            }else{
+                result = buildPostRequest(url, jsonReqData);
+            }
         }
 
         return dealWithResult(result,clazz);
@@ -146,10 +150,6 @@ public abstract class Paymax extends PaymaxBase {
             if (t==null){
                 t = clazz.newInstance();
             }
-            if(clazz.getSimpleName().equals("String")){
-                return t;
-            }
-
             Field f = clazz.getDeclaredField(REQUEST_SUCCESS_FLAG);
             f.setAccessible(true);
             f.set(t,resultCode<400);
@@ -173,7 +173,7 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      * @throws InvalidResponseException
      */
-    private static  Map<String, String> buildPostRequest(String url, String jsonReqData, Class clazz) throws IOException, InvalidResponseException {
+    private static  Map<String, String> buildPostRequest(String url, String jsonReqData) throws IOException, InvalidResponseException {
         Map<String, String> result = null;
 
         HttpPost httpPost = new HttpPost(url);
@@ -188,15 +188,6 @@ public abstract class Paymax extends PaymaxBase {
         httpPost.addHeader(PaymaxConfig.SIGN,sign);
 
         CloseableHttpResponse response = httpsClient.execute(httpPost);
-
-        if(clazz.getSimpleName().equals("String")){
-            int responseCode = response.getStatusLine().getStatusCode();
-            String resData = EntityUtils.toString(response.getEntity(), Charset.forName(PaymaxConfig.CHARSET));
-            result.put(RESPONSE_CODE, String.valueOf(responseCode));
-            result.put(RESPONSE_DATA, resData);
-            return result;
-        }
-
         try {
             result = verifyData(response);
         } finally {
@@ -206,6 +197,37 @@ public abstract class Paymax extends PaymaxBase {
 
         return result;
 
+    }
+
+    /**
+     * 对账单下载POST请求
+     * @param url
+     * @param jsonReqData
+     * @return
+     * @throws IOException
+     * @throws InvalidResponseException
+     */
+    private static String buildDownloadPostRequest(String url, String jsonReqData) throws IOException, InvalidResponseException {
+
+        HttpPost httpPost = new HttpPost(url);
+
+        httpPost.setEntity(
+                new ByteArrayEntity(jsonReqData.getBytes(Charset.forName(PaymaxConfig.CHARSET)), ContentType.APPLICATION_JSON));
+
+        setCustomHeaders(httpPost);
+
+        String sign = signData(httpPost);
+
+        httpPost.addHeader(PaymaxConfig.SIGN,sign);
+
+        CloseableHttpResponse response = httpsClient.execute(httpPost);
+
+        try {
+            return EntityUtils.toString(response.getEntity(), Charset.forName(PaymaxConfig.CHARSET));
+        } finally {
+            response.close();
+            httpPost.releaseConnection();
+        }
     }
 
     /**

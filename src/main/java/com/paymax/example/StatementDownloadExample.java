@@ -1,6 +1,5 @@
 package com.paymax.example;
 
-import com.alibaba.fastjson.JSON;
 import com.paymax.exception.AuthorizationException;
 import com.paymax.exception.InvalidRequestException;
 import com.paymax.exception.InvalidResponseException;
@@ -13,8 +12,8 @@ import java.util.Map;
 /**
  * @Author shane
  * @Time 2016/10/20 21:47
- * @Email baohua.shan@zhulebei.com
- * @Desc ...
+ * @Email shanbaohua@lxfintech.com
+ * @Desc 对账单下载接口调用示例
  */
 public class StatementDownloadExample {
 
@@ -25,12 +24,12 @@ public class StatementDownloadExample {
 
     private void download() {
         Map<String, Object> statementMap = new HashMap<String, Object>();
-        statementMap.put("appointDay", "20161020");
-        statementMap.put("channelCategory", "WECHAT");
+        statementMap.put("appointDay", "20160810");
+        statementMap.put("channelCategory", "ALIPAY");
         statementMap.put("statementType", "ALL");
         try {
             String result = StatementDownload.download(statementMap);
-            System.out.println(JSON.toJSONString(result));
+            System.out.println(result);
         } catch (AuthorizationException e) {
             e.printStackTrace();
         } catch (InvalidResponseException e) {
