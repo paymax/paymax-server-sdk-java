@@ -16,7 +16,7 @@ public class RefundExample {
     public static void main(String[] args) {
         RefundExample ce = new RefundExample();
         ce.charge();
-        ce.retrieve();
+//        ce.retrieve();
     }
 
     /**
@@ -24,14 +24,14 @@ public class RefundExample {
      */
     public void charge() {
         Map<String, Object> refundMap = new HashMap<String, Object>();
-        refundMap.put("amount", 1);
+        refundMap.put("amount", "0.01");
         refundMap.put("description", "description");
         Map<String, Object> extra = new HashMap<String, Object>();
         extra.put("extra_key2","extra_value2");
         extra.put("extra_key1","extra_value1");
         refundMap.put("extra",extra);
         try {
-            Refund refund = Refund.create("ch_25214d51cccb602c1045fafa",refundMap);
+            Refund refund = Refund.create("ch_5f9464cac493723545d1a018",refundMap);
             printResult(refund);
         } catch (AuthorizationException e) {
             e.printStackTrace();
