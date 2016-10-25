@@ -16,7 +16,7 @@ public class RefundExample {
     public static void main(String[] args) {
         RefundExample ce = new RefundExample();
         ce.charge();
-//        ce.retrieve();
+        ce.retrieve();
     }
 
     /**
