@@ -264,7 +264,7 @@ public abstract class Paymax extends PaymaxBase {
                     out.write(data);//body
                     out.close();
 
-                    String toVerifyData = out.toString();
+                    String toVerifyData = out.toString(PaymaxConfig.CHARSET);
 
                     String sign = response.getFirstHeader(PaymaxConfig.SIGN)!=null ? response.getFirstHeader(PaymaxConfig.SIGN).getValue() : "";
 
@@ -390,7 +390,7 @@ public abstract class Paymax extends PaymaxBase {
         byte[] data = IOUtils.toByteArray(request.getRequestBody());
         out.write(data);//body
         out.close();
-        String toSignString = out.toString();
+        String toSignString = out.toString(PaymaxConfig.CHARSET);
         return RSA.sign(toSignString, SignConfig.PRIVATE_KEY);
     }
 
