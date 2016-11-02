@@ -24,9 +24,9 @@ public class StatementDownloadExample {
 
     private void download() {
         Map<String, Object> statementMap = new HashMap<String, Object>();
-        statementMap.put("appointDay", "20160810");
+        statementMap.put("appointDay", "20161027");
         statementMap.put("channelCategory", "ALIPAY");
-        statementMap.put("statementType", "ALL");
+        statementMap.put("statementType", "SUCCESS");
         try {
             String result = StatementDownload.download(statementMap);
             System.out.println(result);
