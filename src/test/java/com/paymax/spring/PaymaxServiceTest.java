@@ -24,9 +24,27 @@ public class PaymaxServiceTest extends SpringWebTest {
     private PaymaxService paymaxService;
 
     @Test
-    public void go() throws IOException, PaymaxException {
+    public void h5() throws IOException, PaymaxException {
         ChargeRequest request = randomRequest();
-        Charge charge = paymaxService.createWechatCharge(request);
+        Charge charge = paymaxService.createH5Charge(request,1,"http://www.baidu.com","http://www.baidu.com");
+        System.out.println(charge);
+        assertThat(charge.getId())
+                .isNotEmpty();
+    }
+
+    @Test
+    public void wechat() throws IOException, PaymaxException {
+        ChargeRequest request = randomRequest();
+        Charge charge = paymaxService.createAppWechatCharge(request);
+        System.out.println(charge);
+        assertThat(charge.getId())
+                .isNotEmpty();
+    }
+
+    @Test
+    public void wechatScan() throws IOException, PaymaxException {
+        ChargeRequest request = randomRequest();
+        Charge charge = paymaxService.createWechatScanCharge(request,"obc-jswk25IUGp3q8RPTYu083rmk");
         System.out.println(charge);
         assertThat(charge.getId())
                 .isNotEmpty();

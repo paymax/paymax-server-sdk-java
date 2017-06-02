@@ -28,7 +28,7 @@ public class PaymaxServiceImpl implements PaymaxService {
     private Environment environment;
 
     @Override
-    public Charge createWechatCharge(AppInfo app, ChargeRequest request) throws PaymaxException, IOException {
+    public Charge createAppWechatCharge(AppInfo app, ChargeRequest request) throws PaymaxException, IOException {
         app = useDefault(app);
         Map<String, Object> chargeMap = createChargeMap(request, app);
         //请根据渠道要求确定是否需要传递extra字段
@@ -38,8 +38,26 @@ public class PaymaxServiceImpl implements PaymaxService {
     }
 
     @Override
-    public Charge createWechatCharge(ChargeRequest request) throws PaymaxException, IOException {
-        return createWechatCharge(null, request);
+    public Charge createAppWechatCharge(ChargeRequest request) throws PaymaxException, IOException {
+        return createAppWechatCharge(null, request);
+    }
+
+    @Override
+    public Charge createWechatScanCharge(AppInfo app, ChargeRequest request, String openId) throws PaymaxException, IOException {
+        app = useDefault(app);
+        Map<String, Object> chargeMap = createChargeMap(request, app);
+        //请根据渠道要求确定是否需要传递extra字段
+        chargeMap.put("channel", "wechat_csb");
+        Map<String, Object> extra = new HashMap<String, Object>();
+        extra.put("open_id", openId);
+        chargeMap.put("extra", extra);
+
+        return createCharge(app, chargeMap);
+    }
+
+    @Override
+    public Charge createWechatScanCharge(ChargeRequest request, String openId) throws PaymaxException, IOException {
+        return createWechatScanCharge(null, request, openId);
     }
 
     private Charge createCharge(AppInfo app, Map<String, Object> chargeMap) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
@@ -97,5 +115,25 @@ public class PaymaxServiceImpl implements PaymaxService {
     @Override
     public Charge createPCCharge(ChargeRequest request, Number userId, String returnUrl) throws PaymaxException, IOException {
         return createPCCharge(null, request, userId, returnUrl);
+    }
+
+    @Override
+    public Charge createH5Charge(ChargeRequest request, Number userId, String returnUrl, String showUrl) throws IOException, PaymaxException {
+        return createH5Charge(null, request, userId, returnUrl, showUrl);
+    }
+
+    @Override
+    public Charge createH5Charge(AppInfo app, ChargeRequest request, Number userId, String returnUrl, String showUrl) throws PaymaxException, IOException {
+        app = useDefault(app);
+        Map<String, Object> chargeMap = createChargeMap(request, app);
+        //请根据渠道要求确定是否需要传递extra字段
+        chargeMap.put("channel", "lakala_h5");
+        Map<String, Object> extra = new HashMap<String, Object>();
+        extra.put("user_id", userId);
+        extra.put("return_url", returnUrl);
+        extra.put("show_url", showUrl);
+        chargeMap.put("extra", extra);
+
+        return createCharge(app, chargeMap);
     }
 }
