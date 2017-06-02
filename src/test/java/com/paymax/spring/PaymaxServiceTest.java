@@ -4,6 +4,7 @@ import com.paymax.exception.PaymaxException;
 import com.paymax.model.Charge;
 import me.jiangcai.lib.test.SpringWebTest;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,6 +25,7 @@ public class PaymaxServiceTest extends SpringWebTest {
     private PaymaxService paymaxService;
 
     @Test
+    @Ignore
     public void h5() throws IOException, PaymaxException {
         ChargeRequest request = randomRequest();
         Charge charge = paymaxService.createH5Charge(request,1,"http://www.baidu.com","http://www.baidu.com");
