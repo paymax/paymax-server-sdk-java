@@ -10,10 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author shane
- * @Time 2016/10/20 21:47
- * @Email shanbaohua@lxfintech.com
- * @Desc 对账单下载接口调用示例
  */
 public class StatementDownloadExample {
 

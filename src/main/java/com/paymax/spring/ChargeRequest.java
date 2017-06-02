@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * <a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#发起支付下单">支付下单请求</a>
+ * <a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E5%8F%91%E8%B5%B7%E6%94%AF%E4%BB%98%E4%B8%8B%E5%8D%95">支付下单请求</a>
  *
  * @author CJ
  */

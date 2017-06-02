@@ -12,7 +12,7 @@ import java.io.IOException;
 public interface PaymaxService {
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#微信移动支付">微信移动支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E5%BE%AE%E4%BF%A1%E7%A7%BB%E5%8A%A8%E6%94%AF%E4%BB%98">微信移动支付请求</a>
      *
      * @param app     可选，参考{@link PaymaxSpringConfig}
      * @param request 请求细节
@@ -21,7 +21,7 @@ public interface PaymaxService {
     Charge createAppWechatCharge(AppInfo app, ChargeRequest request) throws PaymaxException, IOException;
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#微信移动支付">微信移动支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E5%BE%AE%E4%BF%A1%E7%A7%BB%E5%8A%A8%E6%94%AF%E4%BB%98">微信移动支付请求</a>
      *
      * @param request 请求细节
      * @return paymax 唯一支付订单号
@@ -48,7 +48,7 @@ public interface PaymaxService {
     Charge createWechatScanCharge(ChargeRequest request, String openId) throws PaymaxException, IOException;
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#拉卡拉-pc-网关支付">卡拉卡PC网关支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E6%8B%89%E5%8D%A1%E6%8B%89-pc-%E7%BD%91%E5%85%B3%E6%94%AF%E4%BB%98">卡拉卡PC网关支付请求</a>
      *
      * @param app       可选，参考{@link PaymaxSpringConfig}
      * @param request   请求细节
@@ -60,7 +60,7 @@ public interface PaymaxService {
             , IOException;
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#拉卡拉-pc-网关支付">卡拉卡PC网关支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E6%8B%89%E5%8D%A1%E6%8B%89-pc-%E7%BD%91%E5%85%B3%E6%94%AF%E4%BB%98">卡拉卡PC网关支付请求</a>
      *
      * @param request   请求细节
      * @param userId    必填，用户在商户系统中的唯一标识，请使用纯数字格式；
@@ -71,7 +71,7 @@ public interface PaymaxService {
             , IOException;
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#拉卡拉-h5-支付">拉卡拉-h5-支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E6%8B%89%E5%8D%A1%E6%8B%89-h5-%E6%94%AF%E4%BB%98">拉卡拉-h5-支付请求</a>
      *
      * @param request   请求细节
      * @param userId    必填，用户在商户系统中的唯一标识，请使用纯数字格式；
@@ -82,7 +82,7 @@ public interface PaymaxService {
     Charge createH5Charge(ChargeRequest request, Number userId, String returnUrl, String showUrl) throws IOException, PaymaxException;
 
     /**
-     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#拉卡拉-h5-支付">拉卡拉-h5-支付请求</a>
+     * 发起<a href="https://github.com/paymax/paymax-doc/blob/master/API%E6%96%87%E6%A1%A3.md#%E6%8B%89%E5%8D%A1%E6%8B%89-h5-%E6%94%AF%E4%BB%98">拉卡拉-h5-支付请求</a>
      *
      * @param request   请求细节
      * @param userId    必填，用户在商户系统中的唯一标识，请使用纯数字格式；

@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * @Author shane
- * @Time 2016/10/20 21:39
- * @Email baohua.shan@zhulebei.com
- * @Desc ...
  */
 public class StatementDownload extends Paymax {
 
