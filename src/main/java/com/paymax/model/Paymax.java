@@ -7,8 +7,8 @@ import com.paymax.exception.AuthorizationException;
 import com.paymax.exception.InvalidRequestException;
 import com.paymax.exception.InvalidResponseException;
 import com.paymax.sign.HttpRequestWrapper;
-import com.paymax.sign.Request;
 import com.paymax.sign.RSA;
+import com.paymax.sign.Request;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -40,7 +40,9 @@ import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by xiaowei.wang on 2016/4/26.
@@ -105,21 +107,46 @@ public abstract class Paymax extends PaymaxBase {
      * @throws InvalidRequestException
      */
     protected static <T> T request(String url, String jsonReqData, Class<T> clazz) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
+        AppInfo appInfo = makeAppInfoFromStatic();
+        return request(appInfo,url,jsonReqData,clazz);
+    }
 
-        if(StringUtils.isBlank(SignConfig.SECRET_KEY)){
+    private static AppInfo makeAppInfoFromStatic() {
+        AppInfo appInfo = new AppInfo();
+        appInfo.setSecretKey(SignConfig.SECRET_KEY);
+        appInfo.setPrivateKey(SignConfig.PRIVATE_KEY);
+        appInfo.setPublicKey(SignConfig.PAYMAX_PUBLIC_KEY);
+        return appInfo;
+    }
+
+    /**
+     * 增加签名信息参数 by CJ
+     * @param appInfo 签名信息通过栈而不是静态传递
+     * @param url
+     * @param jsonReqData
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws AuthorizationException
+     * @throws IOException
+     * @throws InvalidRequestException
+     */
+    protected static <T> T request(AppInfo appInfo,String url, String jsonReqData, Class<T> clazz) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
+
+        if(StringUtils.isBlank(appInfo.getSecretKey())){
             throw new AuthorizationException("Secret key can not be blank.Please set your Secret key in com.Paymax.config.SignConfig");
         }
 
-        if(StringUtils.isBlank(SignConfig.PRIVATE_KEY)){
+        if(StringUtils.isBlank(appInfo.getPrivateKey())){
             throw new AuthorizationException("RSA Private key can not be blank.Please set your RSA Private key  in com.Paymax.config.SignConfig");
         }
 
-        if(StringUtils.isBlank(SignConfig.PAYMAX_PUBLIC_KEY)){
+        if(StringUtils.isBlank(appInfo.getPublicKey())){
             throw new InvalidRequestException("Paymax Public key can not be blank.Please set your Paymax Public key in com.Paymax.config.SignConfig");
         }
         Map<String, String> result = null;
         if (StringUtils.isBlank(jsonReqData)){
-            result = buildGetRequest(url);
+            result = buildGetRequest(appInfo, url);
         }else {
             if(clazz.getSimpleName().equals("String")){
                 return (T) buildDownloadPostRequest(url, jsonReqData);
@@ -173,7 +200,7 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      * @throws InvalidResponseException
      */
-    private static  Map<String, String> buildPostRequest(String url, String jsonReqData) throws IOException, InvalidResponseException {
+    private static  Map<String, String> buildPostRequest(String url, String jsonReqData) throws IOException, InvalidResponseException, InvalidRequestException {
         Map<String, String> result = null;
 
         HttpPost httpPost = new HttpPost(url);
@@ -240,7 +267,21 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      * @throws InvalidResponseException
      */
-    private static Map<String, String>  verifyData(CloseableHttpResponse response) throws IOException, InvalidResponseException {
+    private static Map<String, String>  verifyData(CloseableHttpResponse response) throws IOException, InvalidResponseException, InvalidRequestException {
+        return verifyData(makeAppInfoFromStatic(),response);
+    }
+
+    /**
+     * 对返回结果进行验签。
+     *  验签成功:返回数据
+     *  验签失败:抛出异常
+     *
+     * @param response
+     * @return
+     * @throws IOException
+     * @throws InvalidResponseException
+     */
+    private static Map<String, String>  verifyData(AppInfo appInfo,CloseableHttpResponse response) throws IOException, InvalidResponseException, InvalidRequestException {
         Map<String, String> result = null;
         HttpEntity entity = response.getEntity();
         if (entity != null) {
@@ -268,18 +309,21 @@ public abstract class Paymax extends PaymaxBase {
 
                     String sign = response.getFirstHeader(PaymaxConfig.SIGN)!=null ? response.getFirstHeader(PaymaxConfig.SIGN).getValue() : "";
 
-                    boolean flag = RSA.verify(toVerifyData,sign,SignConfig.PAYMAX_PUBLIC_KEY);
+                    boolean flag = RSA.verify(toVerifyData,sign,appInfo.getPublicKey());
                     if (!flag){
                         throw new InvalidResponseException("Invalid Response.[Response Data And Sign Verify Failure.]");
                     }
 
-                    if (!SignConfig.SECRET_KEY.equals(secretKey)){
+                    if (!appInfo.getSecretKey().equals(secretKey)){
                         throw new InvalidResponseException("Invalid Response.[Secret Key Is Invalid.]");
                     }
 
                     if (Long.valueOf(timestamp) + VALID_RESPONSE_TTL < System.currentTimeMillis()){
                         throw new InvalidResponseException("Invalid Response.[Response Time Is Invalid.]");
                     }
+                }else{
+                    // 不再返回「非正常」结果，代替以异常
+                    throw new InvalidRequestException(resData);
                 }
 
 
@@ -300,12 +344,14 @@ public abstract class Paymax extends PaymaxBase {
 
     /**
      * GET请求
+     *
+     * @param appInfo
      * @param url
      * @return
      * @throws IOException
      * @throws InvalidResponseException
      */
-    public static Map<String, String> buildGetRequest(String url) throws IOException, InvalidResponseException {
+    private static Map<String, String> buildGetRequest(AppInfo appInfo, String url) throws IOException, InvalidResponseException, InvalidRequestException {
         Map<String, String> result = null;
 
         HttpGet httpGet = new HttpGet(url);
@@ -334,8 +380,18 @@ public abstract class Paymax extends PaymaxBase {
      * @param request
      */
     private static void setCustomHeaders(HttpRequestBase request) {
+        setCustomHeaders(makeAppInfoFromStatic(),request);
+    }
+
+    /**
+     * 设置header
+     *
+     * Request Header
+     * @param request
+     */
+    private static void setCustomHeaders(AppInfo appInfo,HttpRequestBase request) {
         request.addHeader("Content-Type", "application/json; charset=" + PaymaxConfig.CHARSET);
-        request.addHeader(HEADER_KEY_AUTHORIZATION,SignConfig.SECRET_KEY);
+        request.addHeader(HEADER_KEY_AUTHORIZATION,appInfo.getSecretKey());
 
         String timestamp = String.valueOf(System.currentTimeMillis());
         request.addHeader(HEADER_KEY_TIMESTAMP, timestamp);
@@ -364,6 +420,17 @@ public abstract class Paymax extends PaymaxBase {
      * @throws IOException
      */
     private static String signData(HttpRequestBase httpRequest) throws IOException {
+        return signData(makeAppInfoFromStatic(),httpRequest);
+    }
+
+    /**
+     * 签名数据
+     *
+     * @param httpRequest
+     * @return
+     * @throws IOException
+     */
+    private static String signData(AppInfo appInfo,HttpRequestBase httpRequest) throws IOException {
         Request<HttpRequest> request = new HttpRequestWrapper(
                 httpRequest);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -391,7 +458,7 @@ public abstract class Paymax extends PaymaxBase {
         out.write(data);//body
         out.close();
         String toSignString = out.toString(PaymaxConfig.CHARSET);
-        return RSA.sign(toSignString, SignConfig.PRIVATE_KEY);
+        return RSA.sign(toSignString, appInfo.getPrivateKey());
     }
 
 }
