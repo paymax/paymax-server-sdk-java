@@ -1,7 +1,9 @@
 package com.paymax.spring.event;
 
 import com.paymax.model.Refund;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 系统会抛出表示状态的改变；应用程序应当为此校验金额之类的数据有效性
@@ -9,6 +11,8 @@ import lombok.Data;
  * @author CJ
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefundChangeEvent {
     private Refund data;
 }
