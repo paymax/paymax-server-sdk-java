@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author CJ
@@ -40,8 +39,9 @@ public class PaymaxWebHook {
 
     @RequestMapping(method = RequestMethod.POST, value = "${com.paymax.spring.hookUriWithoutAppId}/{app}")
     public ResponseEntity<String> webRequest(HttpServletRequest request, @RequestHeader("Sign") String sign
-            , @PathVariable("app") String app) throws NoSuchAlgorithmException, IOException {
+            , @PathVariable("app") String app) throws IOException {
         final String content = StreamUtils.copyToString(request.getInputStream(), Charset.forName(RSA.CHAR_SET));
+        log.debug("来访数据:" + content);
         if (!RSA.verify(content
                 , sign, environment.getRequiredProperty("com.paymax.spring.default.publicKey"))) {
             log.info("未获得信任的通知回调；来源IP:" + request.getRemoteAddr());
