@@ -83,7 +83,7 @@ public class PaymaxServiceImpl implements PaymaxService {
     public String javascriptForWechatCharge(Charge charge) {
         Map<String, Object> wap = (Map<String, Object>) charge.getCredential().get("wechat_wap");
         String params = (String) wap.get("jsApiParams");
-        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String uuid = "tmp_"+UUID.randomUUID().toString().replace("-", "");
         @SuppressWarnings("StringBufferReplaceableByString")
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("var ").append(uuid).append(" = function () {\n" +
