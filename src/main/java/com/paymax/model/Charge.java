@@ -312,6 +312,18 @@ public class Charge extends Paymax {
     }
 
     /**
+     * 创建充值订单
+     * @param params
+     * @return
+     * @throws AuthorizationException
+     * @throws IOException
+     * @throws InvalidRequestException
+     */
+    public static Charge create(AppInfo appInfo,Map<String,Object> params) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
+        return request(appInfo,PaymaxConfig.API_BASE_URL+ PaymaxConfig.CREATE_CHARGE, JSONObject.toJSONString(params),Charge.class);
+    }
+
+    /**
      * 查询充值订单
      * @param chargeId
      * @return

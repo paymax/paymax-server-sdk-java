@@ -1,0 +1,30 @@
+{
+  "request": {
+    "method": "POST",
+    "uri": "/payMax_webHook",
+    "headers": {
+      "Accept-encoding": [
+        "gzip,deflate"
+      ],
+      "Connection": [
+        "Keep-Alive"
+      ],
+      "Host": [
+        "120.132.21.21"
+      ],
+      "User-agent": [
+        "Apache-HttpClient/4.3.6 (java 1.5)"
+      ],
+      "Content-type": [
+        "application/json;charset=UTF-8"
+      ],
+      "Sign": [
+        "AHsK8VsjndeO81dLASIe+mxd5XI+WAFuGmnqasgwbOh9XuuJg8W+Lk7SIoWxfNMebMyvxAhKQRkibjTOXdnzNliw6AHAV1SqQKPOlNBFNcDKxI6Gn8HBgNuQSPDCvCsjxOyhQR/u/yy5Tb7p0k7iIHB0avuuOzpsBRZb4jZLDVg="
+      ],
+      "Content-length": [
+        "728"
+      ]
+    },
+    "content": "{\"data\":{\"amount\":0.01,\"amount_refunded\":0,\"amount_settle\":0,\"body\":\"我系中文00300f5f-8438-4ba6-82fb-1b0d8abd3202\",\"client_ip\":\"127.0.0.1\",\"credential\":{\"wechat_csb\":{\"qr_code\":\"weixin://wxpay/bizpayurl?pr=THkIR3X\"}},\"currency\":\"cny\",\"description\":\"\",\"extra\":{\"open_id\":\"obc-jswk25IUGp3q8RPTYu083rmk\",\"user_id\":\"oOOL0wDkfVMAeehOtnEZo9HzKYMU\"},\"id\":\"ch_7c086ea634c088905f8767c4\",\"livemode\":false,\"order_no\":\"f1b59ee4-00f8-49f5-a304-b8388d0036cc\",\"refunds\":[],\"status\":\"SUCCEED\",\"subject\":\"我系商品iuptPkFELA\",\"time_created\":1496654963000,\"time_expire\":1496655202106,\"time_paid\":1496655169000,\"transaction_no\":\"17060520566929\"},\"notifyNo\":\"evt_967bd9d475164ae4ab4906dc882d6255\",\"timeCreated\":1496655170935,\"type\":\"CHARGE\"}"
+  }
+}

@@ -200,7 +200,6 @@ public class RSA {
 	/**
 	 * 得到私钥对象
 	 * @param privateKey 密钥字符串（经过base64编码的秘钥字节）
-	 * @throws Exception
 	 */
 	public static PrivateKey getPrivateKey(String privateKey)  {
 		try {
@@ -225,7 +224,6 @@ public class RSA {
 	/**
 	 * 获取公钥对象
 	 * @param publicKey 密钥字符串（经过base64编码秘钥字节）
-	 * @throws Exception
 	 */
 	public static PublicKey getPublicKey(String publicKey) {
 
