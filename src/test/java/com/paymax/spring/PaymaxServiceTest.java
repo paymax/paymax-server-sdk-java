@@ -35,7 +35,7 @@ public class PaymaxServiceTest extends SpringWebTest {
     }
 
     @Test
-    public void wechat() throws IOException, PaymaxException {
+    public void appWechat() throws IOException, PaymaxException {
         ChargeRequest request = randomRequest();
         Charge charge = paymaxService.createAppWechatCharge(request);
         System.out.println(charge);
@@ -48,6 +48,16 @@ public class PaymaxServiceTest extends SpringWebTest {
         ChargeRequest request = randomRequest();
         Charge charge = paymaxService.createWechatScanCharge(request,"obc-jswk25IUGp3q8RPTYu083rmk");
         System.out.println(charge);
+        assertThat(charge.getId())
+                .isNotEmpty();
+    }
+
+    @Test
+    public void wechat() throws IOException, PaymaxException {
+        ChargeRequest request = randomRequest();
+        Charge charge = paymaxService.createWechatCharge(request,"o6Wfs1Y4sktqIILhSx7upmcCCa0s");
+        System.out.println(charge);
+        System.out.println(paymaxService.javascriptForWechatCharge(charge));
         assertThat(charge.getId())
                 .isNotEmpty();
     }

@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author CJ
@@ -58,6 +59,58 @@ public class PaymaxServiceImpl implements PaymaxService {
     @Override
     public Charge createWechatScanCharge(ChargeRequest request, String openId) throws PaymaxException, IOException {
         return createWechatScanCharge(null, request, openId);
+    }
+
+    @Override
+    public Charge createWechatCharge(AppInfo app, ChargeRequest request, String openId) throws PaymaxException, IOException {
+        app = useDefault(app);
+        Map<String, Object> chargeMap = createChargeMap(request, app);
+        chargeMap.put("channel", "wechat_wap");
+        Map<String, Object> extra = new HashMap<String, Object>();
+        extra.put("open_id", openId);
+        chargeMap.put("extra", extra);
+
+        return createCharge(app, chargeMap);
+    }
+
+    @Override
+    public Charge createWechatCharge(ChargeRequest request, String openId) throws PaymaxException, IOException {
+        return createWechatCharge(null, request, openId);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String javascriptForWechatCharge(Charge charge) {
+        Map<String, Object> wap = (Map<String, Object>) charge.getCredential().get("wechat_wap");
+        String params = (String) wap.get("jsApiParams");
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        @SuppressWarnings("StringBufferReplaceableByString")
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("var ").append(uuid).append(" = function () {\n" +
+                "    function onBridgeReady() {\n" +
+                "        WeixinJSBridge.invoke(\n" +
+                "            'getBrandWCPayRequest',");
+        stringBuilder.append(params).append(",");
+        stringBuilder.append("function (res) {\n" +
+                "                if (res.err_msg == \"get_brand_wcpay_request：ok\") {\n" +
+                "                }\n" +
+                "            }\n" +
+                "        );\n" +
+                "    }\n" +
+                "\n" +
+                "    if (typeof WeixinJSBridge == \"undefined\") {\n" +
+                "        if (document.addEventListener) {\n" +
+                "            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);\n" +
+                "        } else if (document.attachEvent) {\n" +
+                "            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);\n" +
+                "            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);\n" +
+                "        }\n" +
+                "    } else {\n" +
+                "        onBridgeReady();\n" +
+                "    }\n" +
+                "};");
+        stringBuilder.append(uuid).append("();");
+        return stringBuilder.toString();
     }
 
     private Charge createCharge(AppInfo app, Map<String, Object> chargeMap) throws AuthorizationException, IOException, InvalidRequestException, InvalidResponseException {
