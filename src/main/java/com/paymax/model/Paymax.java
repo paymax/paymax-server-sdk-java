@@ -43,7 +43,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 /**
- * Created by xiaowei.wang on 2016/4/26.
+ * 注：本DEMO或文档中所示的默认配置参数仅供参考，接入方须视各自系统及交易情况进行相应的调整。如因采用默认配置参数导致交易异常及造成相关损失的，我司不承担相关责任。
  */
 public abstract class Paymax extends PaymaxBase {
 
@@ -84,7 +84,23 @@ public abstract class Paymax extends PaymaxBase {
             Registry<ConnectionSocketFactory> registry = registryBuilder.build();
 
             PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
+            /**
+             * MaxtTotal是整个池子的大小；
+             */
             connManager.setMaxTotal(500);
+            /**
+             * DefaultMaxPerRoute是根据连接到的主机对MaxTotal的一个细分（分配给同一个route(路由)最大的并发连接数）；
+             * 比如：
+             * MaxtTotal=400 DefaultMaxPerRoute=200
+             * 只连接到http://baidu.com时，到这个主机的并发最多只有 200；而不是 400；
+             * 连接到http://baidu.com 和 http://qq.com时，到每个主机的并发最多只有 200；即加起来是 400（不能超过 400）；
+             * 所以起作用的设置是DefaultMaxPerRoute。
+             *
+             *
+             * route：运行环境机器 到 目标机器的一条线路。
+             * 举例来说，我们使用HttpClient的实现来分别请求 www.baidu.com 的资源和 www.bing.com 的资源那么他就会产生两个route。
+             */
+            connManager.setDefaultMaxPerRoute(200);
 
             httpsClient = HttpClientBuilder.create().setConnectionManager(connManager).build();
 

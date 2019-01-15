@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author shane
- * @Time 2016/10/20 21:47
- * @Email shanbaohua@lxfintech.com
- * @Desc 对账单下载接口调用示例
+ * 注：本DEMO或文档中所示的默认配置参数仅供参考，接入方须视各自系统及交易情况进行相应的调整。如因采用默认配置参数导致交易异常及造成相关损失的，我司不承担相关责任。
+ * 对账单下载接口示例
  */
 public class StatementDownloadExample {
 
